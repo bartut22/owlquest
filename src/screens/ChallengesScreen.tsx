@@ -274,7 +274,7 @@ export default function ChallengesScreen({ onHootIt }: Props) {
                     </div>
                   </div>
 
-                  <div style={{ fontSize: 14, color: "#7A7AB5", lineHeight: 1.55, fontFamily: "DM Sans, sans-serif" }}>
+                  <div className="markdown-container" style={{ fontSize: 14, color: "#7A7AB5", lineHeight: 1.55, fontFamily: "DM Sans, sans-serif" }}>
                     <ReactMarkdown rehypePlugins={[rehypeRaw]}>{challenge.description}</ReactMarkdown>
                   </div>
                   

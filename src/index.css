@@ -112,6 +112,11 @@ select:focus-visible {
   border-radius: 6px;
 }
 
+.markdown-container a {
+  color: #4F7FFA;
+  text-decoration: underline;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .tap, * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
