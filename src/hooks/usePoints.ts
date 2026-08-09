@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 
 export function usePoints(userId: string | null | undefined) {
-  const [points, setPoints] = useState<number | null>(null)
+  const [points, setPoints] = useState<{challenge_points: number; bonus_points: number; total_points: number;} | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -19,7 +19,7 @@ export function usePoints(userId: string | null | undefined) {
       target_user_id: userId,
     })
     if (error) setError(error.message)
-    else setPoints(data)
+    else setPoints(data?.[0] || null)
     setLoading(false)
   }, [userId])
 

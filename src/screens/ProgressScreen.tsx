@@ -43,16 +43,17 @@ export default function ProgressScreen({ userId = undefined }: { userId?: string
   const { overallRank, collegeRank } = useRanks(userId);
   const { avgDone: collegeAvgDone, memberCount: collegeMemberCount } = useCollegeAvgDone(profile?.college_id);
   const { avgDone: schoolAvgDone } = useSchoolAvgDone();
+  const totalPoints = myPoints?.total_points;
 
-  const points = myPoints ?? 0;
+  const challengePoints = myPoints?.challenge_points;
   const done = myDone ?? 0;
   const total = totalChallenges ?? 0;
   const collegeName = getCollegeName(profile?.college_id ?? -1);
 
-  const currentRank = RANKS.find((r) => points >= r.min && points <= r.max) ?? RANKS[0];
+  const currentRank = RANKS.find((r) => totalPoints >= r.min && totalPoints <= r.max) ?? RANKS[0];
   const nextRank = RANKS[RANKS.indexOf(currentRank) + 1];
   const rankProgress = nextRank
-    ? ((points - currentRank.min) / (nextRank.min - currentRank.min)) * 100
+    ? ((totalPoints - currentRank.min) / (nextRank.min - currentRank.min)) * 100
     : 100;
 
   const { maxPoints } = useMaxPossiblePoints();
@@ -100,7 +101,7 @@ export default function ProgressScreen({ userId = undefined }: { userId?: string
                 {currentRank.name}
               </div>
               <div style={{ fontSize: 14, color: "#7A7AB5", fontFamily: "DM Sans, sans-serif" }}>
-                {points.toLocaleString()} points
+                {totalPoints?.toLocaleString() || 0} points
               </div>
             </div>
           </div>
@@ -109,7 +110,7 @@ export default function ProgressScreen({ userId = undefined }: { userId?: string
             <>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
                 <span style={{ fontSize: 12, color: "#6666AA", fontFamily: "DM Sans, sans-serif" }}>
-                  {points - currentRank.min} / {nextRank.min - currentRank.min} pts to {nextRank.name}
+                  {totalPoints || 0} / {nextRank.min} pts to {nextRank.name}
                 </span>
                 <span style={{ fontSize: 12, fontWeight: 700, color: nextRank.color, fontFamily: "Outfit, sans-serif" }}>
                   <nextRank.Icon size={13} strokeWidth={2} /> {nextRank.name}
@@ -124,7 +125,7 @@ export default function ProgressScreen({ userId = undefined }: { userId?: string
 
         <div style={{ display: "flex", gap: 8, marginBottom: 24 }}>
           {RANKS.map((r) => {
-            const achieved = points >= r.min;
+            const achieved = totalPoints && totalPoints >= r.min;
             return (
               <div key={r.name} style={{ flex: 1, padding: "10px 6px", background: achieved ? r.bg : "#F7F6FC", border: `1px solid ${achieved ? r.border : "#ECEAF9"}`, borderRadius: 12, textAlign: "center", opacity: achieved ? 1 : 0.55 }}>
                 <div style={{ fontSize: 20, marginBottom: 4, color: achieved ? r.color : "#8A8AC0" }}>
@@ -143,9 +144,9 @@ export default function ProgressScreen({ userId = undefined }: { userId?: string
             Challenge Completion
           </div>
 
-          <ProgressBar value={done} max={total} color="#4F7FFA" label="You" sublabel={``} />
-          <ProgressBar value={Math.round(collegeAvgDone)} max={maxPossiblePoints} color="#8B5CF6" label={`${collegeName} avg`} sublabel={``} />
-          <ProgressBar value={Math.round(schoolAvgDone)} max={maxPossiblePoints} color="#22C55E" label="School avg" sublabel={``} />
+          <ProgressBar value={challengePoints ?? 0} max={maxPossiblePoints} color="#4F7FFA" label="You" sublabel={`Based off points awarded from challenges`} />
+          <ProgressBar value={Math.round(collegeAvgDone)} max={maxPossiblePoints} color="#8B5CF6" label={`${collegeName} average`} sublabel={``} />
+          <ProgressBar value={Math.round(schoolAvgDone)} max={maxPossiblePoints} color="#22C55E" label="School average" sublabel={``} />
         </div>
 
         <div style={{ background: "#FFFFFF", border: "1px solid #ECEAF9", borderRadius: 20, padding: "22px 20px", display: "flex", alignItems: "center", gap: 16, boxShadow: "var(--shadow)" }}>

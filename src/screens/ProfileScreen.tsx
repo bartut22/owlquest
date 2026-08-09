@@ -56,7 +56,8 @@ export default function ProfileScreen({
   }
 
   const { profile, loading } = useProfile(userId);
-  const { points: pointsFromSubmissions } = usePoints(userId);
+  const {challenge_points: challengePoints, bonus_points: bonusPoints, total_points: totalPoints} = usePoints(userId).points || {challenge_points: 0, bonus_points: 0, total_points: 0};
+
   useChallengesDone(userId);
   const { followers, following } = useFollowCounts(userId);
   const { overallRank, collegeRank } = useRanks(userId);
@@ -69,7 +70,7 @@ export default function ProfileScreen({
 
   const completionPct =
     totalPossiblePoints && totalPossiblePoints > 0
-      ? Math.min(100, ((pointsFromSubmissions ?? 0) / totalPossiblePoints) * 100)
+      ? Math.min(100, ((challengePoints ?? 0) / totalPossiblePoints) * 100)
       : 0;
 
   async function handleLogout() {
@@ -253,7 +254,7 @@ export default function ProfileScreen({
             <div style={{ display: "flex", gap: 1, background: "#ECEAF9", borderRadius: 16, overflow: "hidden", marginBottom: 20, boxShadow: "var(--shadow)" }}>
               <div style={{ flex: 1, background: "#FFFFFF", padding: "14px 8px", textAlign: "center" }}>
                 <div style={{ fontSize: 18, fontWeight: 800, color: "#2D2843", fontFamily: "Outfit, sans-serif" }}>
-                  {pointsFromSubmissions}
+                  {totalPoints}
                 </div>
                 <div style={{ fontSize: 11, color: "#6666AA", marginTop: 2, fontFamily: "DM Sans, sans-serif" }}>
                   Points
@@ -391,7 +392,7 @@ export default function ProfileScreen({
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 2 }}>
           {!profile || !profile.posts ? null : (
             <>
-              {profile.posts.map((post) => (
+              {profile.posts.map((post: {id: string, media_type: "image" | "video", image?: string, points: number, verified: boolean}) => (
                 <button
                   key={post.id}
                   onClick={() => openPostStack(post.id)}
