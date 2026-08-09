@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { useProfile } from "@/hooks/useProfile"
 import { useAuthUser } from "@/hooks/useAuthUser";
 import { supabase } from "@/lib/supabase";
+import { useReferralsDone } from "@/hooks/useReferralsDone";
+import { toast } from "sonner";
+import { useGetReferrer } from "@/hooks/useGetReferrer";
 
 const DROP_DATE = new Date("2026-08-16T00:00:00");
 
@@ -47,14 +50,14 @@ function Digit({ value, label }: { value: number; label: string }) {
           }}
         />
         <span
-          // style={{
-          //   fontFamily: "Outfit, sans-serif",
-          //   fontSize: 42,
-          //   fontWeight: 800,
-          //   color: "#2d2843",
-          //   lineHeight: 1,
-          //   letterSpacing: "-0.02em",
-          // }}
+        // style={{
+        //   fontFamily: "Outfit, sans-serif",
+        //   fontSize: 42,
+        //   fontWeight: 800,
+        //   color: "#2d2843",
+        //   lineHeight: 1,
+        //   letterSpacing: "-0.02em",
+        // }}
         >
           {String(value).padStart(2, "0")}
         </span>
@@ -79,6 +82,8 @@ export default function StartScreen({ userId, onStartNow }: { userId?: string; o
   const { userId: authUserId, authLoading } = useAuthUser();
   const [time, setTime] = useState(getTimeLeft());
   const { profile } = useProfile(userId);
+  const { referralsDone } = useReferralsDone();
+  const { referrer: myReferrer } = useGetReferrer();
 
   useEffect(() => {
     const id = setInterval(() => setTime(getTimeLeft()), 1000);
@@ -88,6 +93,7 @@ export default function StartScreen({ userId, onStartNow }: { userId?: string; o
   if (authLoading) return <p>Loading...</p>
   // if (authUserId !== userId) return <p>Not authorized to view this timer.</p>
   // if (!profile) return <p>Profile not found.</p>
+
 
   return (
     <div
@@ -301,6 +307,38 @@ export default function StartScreen({ userId, onStartNow }: { userId?: string; o
             >
               🛡️ Start Now (Admin)
             </button>
+          )}
+
+          {profile && (
+            <div style={{ width: "100%" }}>
+              <button
+                onClick={() => {
+                  // copy referral link
+                  navigator.clipboard.writeText(`${window.location.origin}/r/${profile.referral_code}`)
+                  toast.success("Referral link copied to clipboard!");
+                }}
+                style={{
+                  marginTop: 8,
+                  background: "transparent",
+                  border: "1px solid #2D2843",
+                  color: "#2D2843",
+                  fontWeight: 600,
+                  fontSize: "0.95rem",
+                  padding: "10px 16px",
+                  borderRadius: 12,
+                  cursor: "pointer",
+                  width: "100%",
+                }}
+              >
+                {`📋 Copy referral link (+250 points/referral)`}
+              </button>
+              <p style={{
+                fontStyle: "italic",
+                textAlign: "center"
+              }}>
+                {`(you have referred ${referralsDone} ${referralsDone === 1 ? "person" : "people"}${myReferrer ? `, and you were referred by @${myReferrer?.handle} a.k.a ${myReferrer?.display_name}` : ``})`}
+              </p>
+            </div>
           )}
         </div>
       </div>

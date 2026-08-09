@@ -11,9 +11,9 @@ import { GemIcon, MedalIcon, TrophyIcon } from "@/components/Icons";
 
 const RANKS = [
   { name: "Bronze", Icon: MedalIcon, min: 0, max: 499, color: "#B0703A", bg: "rgba(205,127,50,0.10)", border: "rgba(205,127,50,0.25)" },
-  { name: "Silver", Icon: MedalIcon, min: 500, max: 999, color: "#7C8698", bg: "rgba(148,163,184,0.12)", border: "rgba(148,163,184,0.28)" },
-  { name: "Gold", Icon: MedalIcon, min: 1000, max: 2499, color: "#D98A0E", bg: "rgba(245,166,35,0.10)", border: "rgba(245,166,35,0.25)" },
-  { name: "Diamond", Icon: GemIcon, min: 2500, max: Infinity, color: "#1E9AB0", bg: "rgba(103,232,249,0.14)", border: "rgba(103,232,249,0.3)" },
+  { name: "Silver", Icon: MedalIcon, min: 500, max: 1499, color: "#7C8698", bg: "rgba(148,163,184,0.12)", border: "rgba(148,163,184,0.28)" },
+  { name: "Gold", Icon: MedalIcon, min: 1500, max: 3499, color: "#D98A0E", bg: "rgba(245,166,35,0.10)", border: "rgba(245,166,35,0.25)" },
+  { name: "Diamond", Icon: GemIcon, min: 3500, max: Infinity, color: "#1E9AB0", bg: "rgba(103,232,249,0.14)", border: "rgba(103,232,249,0.3)" },
 ];
 
 function ProgressBar({ value, max, color, label, sublabel }: { value: number; max: number; color: string; label: string; sublabel: string }) {
