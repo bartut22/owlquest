@@ -6,11 +6,10 @@ import { useReferralsDone } from "@/hooks/useReferralsDone";
 import { toast } from "sonner";
 import { useGetReferrer } from "@/hooks/useGetReferrer";
 
-const DROP_DATE = new Date("2026-08-16T00:00:00");
+const DROP_EPOCH_MS = Date.parse("2026-08-16T00:00:00-05:00"); // Midnight CDT
 
 function getTimeLeft() {
-  const now = new Date();
-  const diff = DROP_DATE.getTime() - now.getTime();
+  const diff = DROP_EPOCH_MS - Date.now();
   if (diff <= 0) return null;
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
   const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
