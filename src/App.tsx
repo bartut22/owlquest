@@ -20,6 +20,7 @@ import OnboardingScreen from "./screens/OnboardingScreen";
 import FollowListScreen from "./screens/FollowListScreen";
 import PostScreen from "./screens/PostScreen";
 import ReferralLink from "./components/ReferralLink";
+import { DROP_DATE, hasDropPassed } from "./lib/dropDate";
 
 type Tab = "leaderboard" | "feed" | "challenges" | "profile" | "progress";
 
@@ -279,7 +280,7 @@ function MainApp({ session, modal, setModal, CHALLENGES }: any) {
 
 export default function App() {
   const [modal, setModal] = useState<Modal>({ kind: "none" });
-  const [showTimer, setShowTimer] = useState(true);
+  const [showTimer, setShowTimer] = useState(() => !hasDropPassed());
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const { challenges: CHALLENGES } = useChallenges();
@@ -292,6 +293,17 @@ export default function App() {
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => setSession(session));
     return () => sub.subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (!showTimer) return;
+    const msUntilDrop = DROP_DATE.getTime() - Date.now();
+    if (msUntilDrop <= 0) {
+      setShowTimer(false);
+      return;
+    }
+    const timeoutId = window.setTimeout(() => setShowTimer(false), msUntilDrop);
+    return () => window.clearTimeout(timeoutId);
+  }, [showTimer]);
 
   return (
     <>

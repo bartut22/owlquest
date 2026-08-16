@@ -5,8 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { useReferralsDone } from "@/hooks/useReferralsDone";
 import { toast } from "sonner";
 import { useGetReferrer } from "@/hooks/useGetReferrer";
-
-const DROP_DATE = new Date("2026-08-16T00:00:00");
+import { DROP_DATE } from "@/lib/dropDate";
 
 function getTimeLeft() {
   const now = new Date();
