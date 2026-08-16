@@ -5,19 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { useReferralsDone } from "@/hooks/useReferralsDone";
 import { toast } from "sonner";
 import { useGetReferrer } from "@/hooks/useGetReferrer";
-
-const DROP_DATE = new Date("2026-08-16T00:00:00");
-
-function getTimeLeft() {
-  const now = new Date();
-  const diff = DROP_DATE.getTime() - now.getTime();
-  if (diff <= 0) return null;
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-  return { days, hours, minutes, seconds };
-}
+import { getChallengesTimeLeft } from "@/lib/challengesDrop";
 
 function Digit({ value, label }: { value: number; label: string }) {
   return (
@@ -80,13 +68,13 @@ function Digit({ value, label }: { value: number; label: string }) {
 
 export default function StartScreen({ userId, onStartNow }: { userId?: string; onStartNow: () => void }) {
   const { userId: authUserId, authLoading } = useAuthUser();
-  const [time, setTime] = useState(getTimeLeft());
+  const [time, setTime] = useState(getChallengesTimeLeft());
   const { profile } = useProfile(userId);
   const { referralsDone } = useReferralsDone();
   const { referrer: myReferrer } = useGetReferrer();
 
   useEffect(() => {
-    const id = setInterval(() => setTime(getTimeLeft()), 1000);
+    const id = setInterval(() => setTime(getChallengesTimeLeft()), 1000);
     return () => clearInterval(id);
   }, []);
 
