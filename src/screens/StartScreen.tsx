@@ -90,6 +90,10 @@ export default function StartScreen({ userId, onStartNow }: { userId?: string; o
     return () => clearInterval(id);
   }, []);
 
+  useEffect(() => {
+    if (userId && time === null) onStartNow();
+  }, [onStartNow, time, userId]);
+
   if (authLoading) return <p>Loading...</p>
   // if (authUserId !== userId) return <p>Not authorized to view this timer.</p>
   // if (!profile) return <p>Profile not found.</p>
