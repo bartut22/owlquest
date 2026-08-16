@@ -20,6 +20,7 @@ import OnboardingScreen from "./screens/OnboardingScreen";
 import FollowListScreen from "./screens/FollowListScreen";
 import PostScreen from "./screens/PostScreen";
 import ReferralLink from "./components/ReferralLink";
+import { hasChallengesTimerFinished } from "./lib/challengesDrop";
 
 type Tab = "leaderboard" | "feed" | "challenges" | "profile" | "progress";
 
@@ -280,6 +281,7 @@ function MainApp({ session, modal, setModal, CHALLENGES }: any) {
 export default function App() {
   const [modal, setModal] = useState<Modal>({ kind: "none" });
   const [showTimer, setShowTimer] = useState(true);
+  const [timerFinished, setTimerFinished] = useState(hasChallengesTimerFinished());
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const { challenges: CHALLENGES } = useChallenges();
@@ -293,6 +295,16 @@ export default function App() {
     return () => sub.subscription.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    if (timerFinished) return;
+
+    const id = setInterval(() => {
+      setTimerFinished(hasChallengesTimerFinished());
+    }, 1000);
+
+    return () => clearInterval(id);
+  }, [timerFinished]);
+
   return (
     <>
       <Toaster position="top-right" />
@@ -305,7 +317,7 @@ export default function App() {
           element={
             loading
               ? null
-              : !session || showTimer
+              : !session || (showTimer && !timerFinished)
                 ? <StartScreen userId={session?.user.id} onStartNow={() => setShowTimer(false)} />
                 : <MainApp session={session} modal={modal} setModal={setModal} CHALLENGES={CHALLENGES} />
           }
